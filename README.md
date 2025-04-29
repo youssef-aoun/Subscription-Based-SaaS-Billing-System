@@ -74,7 +74,7 @@ Tech Stack
 
 ---
 
-## 📡 Webhook Testing with Ngrok
+## Webhook Testing with Ngrok
 
 To test Stripe webhooks locally:
 

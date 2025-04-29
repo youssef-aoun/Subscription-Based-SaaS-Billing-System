@@ -1,7 +1,6 @@
 package com.youssef.Subscription_Based.SaaS.Billing.System.controllers.api.v1;
 
-import com.youssef.Subscription_Based.SaaS.Billing.System.dto.SubscriptionRequest;
-import com.youssef.Subscription_Based.SaaS.Billing.System.dto.SubscriptionResponse;
+import com.stripe.exception.StripeException;
 import com.youssef.Subscription_Based.SaaS.Billing.System.dto.UnsubscribeResponse;
 import com.youssef.Subscription_Based.SaaS.Billing.System.dto.ViewSubscriptionResponse;
 import com.youssef.Subscription_Based.SaaS.Billing.System.services.subscription.SubscriptionService;
@@ -20,15 +19,9 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
-    @PostMapping
-    public ResponseEntity<SubscriptionResponse> subscribe(@RequestBody SubscriptionRequest request){
-        SubscriptionResponse response = subscriptionService.subscribeToPlan(request);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/cancel")
-    public ResponseEntity<UnsubscribeResponse> unsubscribe(){
-        UnsubscribeResponse response = subscriptionService.unsubscribe();
+    public ResponseEntity<UnsubscribeResponse> unsubscribe() throws StripeException {
+        UnsubscribeResponse response = subscriptionService.cancelActiveSubscription();
         return ResponseEntity.ok(response);
     }
 
@@ -38,5 +31,10 @@ public class SubscriptionController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/history")
+    public ResponseEntity<ViewSubscriptionResponse> getSubscriptionsHistory(){
+        ViewSubscriptionResponse response = subscriptionService.getSubscriptions();
+        return ResponseEntity.ok(response);
+    }
 
 }

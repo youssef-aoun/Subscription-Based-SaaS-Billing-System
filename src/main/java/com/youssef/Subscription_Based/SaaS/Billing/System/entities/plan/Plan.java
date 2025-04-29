@@ -42,6 +42,12 @@ public class Plan {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
+    @Column(name = "stripe_price_id")
+    private String stripePriceId;
+
+    public static final String MONTHLY = "MONTHLY";
+    public static final String YEARLY  = "YEARLY";
+
 
 
 

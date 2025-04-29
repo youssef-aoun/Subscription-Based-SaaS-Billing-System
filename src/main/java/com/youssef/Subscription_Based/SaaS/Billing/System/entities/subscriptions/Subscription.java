@@ -42,4 +42,11 @@ public class Subscription {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    @Column(name = "stripe_subscription_id")
+    private String stripeSubscriptionId;
+
+    public static final String ACTIVE = "ACTIVE";
+    public static final String PENDING = "PENDING";
+    public static final String CANCELED = "CANCELED";
+
 }

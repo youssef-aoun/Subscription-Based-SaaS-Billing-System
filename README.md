@@ -15,6 +15,7 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
 - **MailSender** for password reset flows
 - **Lombok**, **MapStruct**
 - **Ngrok** (for local webhook testing)
+- **Stripe CLI** (trigger test events)
 
 ---
 
@@ -133,16 +134,20 @@ Business Rules & Smart Logic:
 - Cannot subscribe to the same or lower-tier plan
 - Cannot subscribe again if one is already active or pending
 - Subscriptions canceled at period end (clean UX)
-- Auto-activation via checkout.session.completed
-- Auto-finalization via customer.subscription.deleted
-- Subscription status fully reflects Stripe state
+- `PAST_DUE` status triggered by `invoice.payment_failed`
+- Webhook-driven lifecycle: local DB stays in sync with Stripe
+- Auto-cancellation at period end for clean user experience
 
 Upcoming Features:
 - Swagger / OpenAPI docs
 - Admin API (manage plans/users)
 - CI/CD-ready build
 - Environment-based config switching (dev/prod)
-- Deploy on Render / Railway / AWS
+- Deploy on AWS
+- **Invoice generation & PDF receipts**:
+  - Generate user-facing invoices for completed payments
+  - Download via user dashboard
+  - Store invoice metadata in `invoices` table
 
 Security
 - Passwords securely hashed

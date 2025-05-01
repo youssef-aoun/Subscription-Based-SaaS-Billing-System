@@ -5,11 +5,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ViewSubscriptionResponse {
+public class ViewSubscriptionHistoryResponse {
     private Long subscriptionId;
     private String planName;
     private String billingCycle;
-    private String status;
+    private String status; // e.g., ACTIVE, CANCELED, etc.
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private boolean cancelAtPeriodEnd;

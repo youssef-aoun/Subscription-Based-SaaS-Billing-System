@@ -11,4 +11,5 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     Optional<Subscription> findByUserAndStatus(User user, String status);
     Optional<Subscription> findFirstByUserAndStatusIn(User user, List<String> statuses);
     Optional<Subscription> findByStripeSubscriptionId(String id);
+    List<Subscription> findAllByUser(User user);
 }

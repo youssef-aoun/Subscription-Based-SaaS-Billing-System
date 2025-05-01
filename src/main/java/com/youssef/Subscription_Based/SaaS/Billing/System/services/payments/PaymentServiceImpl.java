@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static com.youssef.Subscription_Based.SaaS.Billing.System.entities.subscriptions.Subscription.ACTIVE;
-import static com.youssef.Subscription_Based.SaaS.Billing.System.entities.subscriptions.Subscription.PENDING;
+import static com.youssef.Subscription_Based.SaaS.Billing.System.entities.subscriptions.Subscription.*;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -49,40 +48,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         User user = userService.getCurrentAuthenticatedUser();
 
-        validateOrHandleExistingSubscription(user, plan);
+        checkIfUserCanSubscribe(user);
 
         Subscription subscription = createLocalSubscription(user, plan);
         return buildStripeCheckoutSession(subscription, plan);
-    }
-
-
-
-    private void validateOrHandleExistingSubscription(User user, Plan plan){
-        // 🔐 Duplicate subscription check
-        Optional<Subscription> existingSubOpt = subscriptionRepository.findFirstByUserAndStatusIn(
-                user,
-                Arrays.asList("ACTIVE", "PENDING")
-        );
-
-        if (existingSubOpt.isPresent()) {
-            Subscription existingSub = existingSubOpt.get();
-
-            if(existingSub.getStatus().equals(PENDING))
-                subscriptionRepository.delete(existingSub);
-            else if(existingSub.getStatus().equals(ACTIVE)){
-                Plan existingPlan = existingSub.getPlan();
-
-                if(isHigherTier(plan, existingPlan)){
-                    throw new IllegalStateException("You have an active subscription. Please upgrade instead");
-                } else {
-                    throw new IllegalStateException("You already have an active subscription.");
-                }
-            }
-        }
-    }
-
-    private boolean isHigherTier(Plan requestedPlan, Plan existingPlan){
-        return requestedPlan.getPrice() > existingPlan.getPrice();
     }
 
     private Subscription createLocalSubscription(User user, Plan plan){
@@ -119,4 +88,26 @@ public class PaymentServiceImpl implements PaymentService {
             throw new RuntimeException("Stripe Checkout Session creation failed", e);
         }
     }
+
+    private void checkIfUserCanSubscribe(User user) {
+        Optional<Subscription> existingSubOpt = subscriptionRepository.findFirstByUserAndStatusIn(
+                user,
+                Arrays.asList(ACTIVE, CANCEL_AT_PERIOD_END, PENDING)
+        );
+
+        if (existingSubOpt.isPresent()) {
+            Subscription existingSub = existingSubOpt.get();
+
+            switch (existingSub.getStatus()) {
+                case ACTIVE:
+                    throw new IllegalStateException("You already have an active subscription.");
+                case CANCEL_AT_PERIOD_END:
+                    throw new IllegalStateException("Your subscription is scheduled to end. Please wait until it ends before subscribing again.");
+                case PENDING:
+                    subscriptionRepository.delete(existingSub);
+                    break;
+            }
+        }
+    }
+
 }

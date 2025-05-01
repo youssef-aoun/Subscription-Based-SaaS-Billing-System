@@ -43,9 +43,9 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public ResponseEntity<?> register(RegisterRequest request){
         if(userRepository.findUserByUsername(request.getUsername()).isPresent())
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Username is taken", 409));
+            throw new IllegalStateException("Username is taken");
         if(userRepository.findUserByEmail(request.getEmail()).isPresent())
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Email is taken", 409));
+            throw new IllegalStateException("Email is taken");
 
         User user = new User();
         user.setName(request.getName());

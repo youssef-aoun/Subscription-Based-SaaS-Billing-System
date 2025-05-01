@@ -11,7 +11,12 @@ import com.youssef.Subscription_Based.SaaS.Billing.System.services.users.UserSer
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.youssef.Subscription_Based.SaaS.Billing.System.entities.subscriptions.Subscription.ACTIVE;
+import static com.youssef.Subscription_Based.SaaS.Billing.System.entities.subscriptions.Subscription.CANCEL_AT_PERIOD_END;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService{
@@ -29,9 +34,9 @@ public class SubscriptionServiceImpl implements SubscriptionService{
     public ViewSubscriptionResponse getSubscriptions() {
         User currentUser = userService.getCurrentAuthenticatedUser();
 
-        Subscription subscription = subscriptionRepository.findByUserAndStatus(
+        Subscription subscription = subscriptionRepository.findFirstByUserAndStatusIn(
                 currentUser,
-                ACTIVE
+                Arrays.asList(ACTIVE, CANCEL_AT_PERIOD_END)
         ).orElseThrow(() -> new IllegalStateException("No active subscription found"));
 
 
@@ -45,6 +50,10 @@ public class SubscriptionServiceImpl implements SubscriptionService{
         response.setStartDate(subscription.getStartDate());
         response.setEndDate(subscription.getEndDate());
         response.setPlanName(plan.getName());
+
+        boolean cancelScheduled = CANCEL_AT_PERIOD_END.equals(subscription.getStatus());
+        response.setCancelAtPeriodEnd(cancelScheduled);
+
         return response;
     }
 
@@ -74,7 +83,7 @@ public class SubscriptionServiceImpl implements SubscriptionService{
         stripeSub.update(params);
 
         // 🛠 Update our local subscription
-        subscription.setStatus("CANCEL_AT_PERIOD_END");
+        subscription.setStatus(CANCEL_AT_PERIOD_END);
         subscriptionRepository.save(subscription);
 
         // 🛠 Build the response
@@ -83,5 +92,24 @@ public class SubscriptionServiceImpl implements SubscriptionService{
         unsubscribeResponse.setMessage("Your subscription has been scheduled for cancellation.");
 
         return unsubscribeResponse;
+    }
+
+    @Override
+    public List<ViewSubscriptionHistoryResponse> getSubscriptionsHistory() {
+        User user = userService.getCurrentAuthenticatedUser();
+        List<Subscription> subscriptions = subscriptionRepository.findAllByUser(user);
+
+        return subscriptions.stream().map(subscription -> {
+            ViewSubscriptionHistoryResponse response = new ViewSubscriptionHistoryResponse();
+            response.setSubscriptionId(subscription.getId());
+            response.setPlanName(subscription.getPlan().getName());
+            response.setBillingCycle(subscription.getPlan().getBillingCycle());
+            response.setStatus(subscription.getStatus());
+            response.setStartDate(subscription.getStartDate());
+            response.setEndDate(subscription.getEndDate());
+            if(subscription.getStatus().equals(CANCEL_AT_PERIOD_END))
+                response.setCancelAtPeriodEnd(true);
+            return response;
+        }).collect(Collectors.toList());
     }
 }

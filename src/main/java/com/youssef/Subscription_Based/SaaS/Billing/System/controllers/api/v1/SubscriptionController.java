@@ -2,11 +2,14 @@ package com.youssef.Subscription_Based.SaaS.Billing.System.controllers.api.v1;
 
 import com.stripe.exception.StripeException;
 import com.youssef.Subscription_Based.SaaS.Billing.System.dto.UnsubscribeResponse;
+import com.youssef.Subscription_Based.SaaS.Billing.System.dto.ViewSubscriptionHistoryResponse;
 import com.youssef.Subscription_Based.SaaS.Billing.System.dto.ViewSubscriptionResponse;
 import com.youssef.Subscription_Based.SaaS.Billing.System.services.subscription.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/subscriptions")
@@ -32,8 +35,8 @@ public class SubscriptionController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<ViewSubscriptionResponse> getSubscriptionsHistory(){
-        ViewSubscriptionResponse response = subscriptionService.getSubscriptions();
+    public ResponseEntity<List<ViewSubscriptionHistoryResponse>> getSubscriptionsHistory(){
+        List<ViewSubscriptionHistoryResponse> response = subscriptionService.getSubscriptionsHistory();
         return ResponseEntity.ok(response);
     }
 

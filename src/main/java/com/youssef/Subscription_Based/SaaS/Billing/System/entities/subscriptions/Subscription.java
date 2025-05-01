@@ -48,5 +48,6 @@ public class Subscription {
     public static final String ACTIVE = "ACTIVE";
     public static final String PENDING = "PENDING";
     public static final String CANCELED = "CANCELED";
+    public static final String CANCEL_AT_PERIOD_END = "CANCEL_AT_PERIOD_END";
 
 }

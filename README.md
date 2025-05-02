@@ -15,7 +15,7 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
 - **MailSender** for password reset flows
 - **Lombok**, **MapStruct**
 - **Ngrok** (for local webhook testing)
-- **Stripe CLI** (trigger test events)
+- **Springdoc OpenAPI** (Swagger UI)
 
 ---
 
@@ -66,11 +66,6 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
 - Syncs `subscriptions` table based on webhook events
 
 ### Subscription Lifecycle
-- Statuses: `PENDING`, `ACTIVE`, `CANCEL_AT_PERIOD_END`, `CANCELED`
-- Stripe subscription ID stored and synced
-- Auto-cancellation at period end
-- Stripe state → local DB updates (auto-managed)
-- ### Subscription Lifecycle
 - Statuses: `PENDING`, `ACTIVE`, `PAST_DUE`, `CANCEL_AT_PERIOD_END`, `CANCELED`
 - Stripe subscription ID stored and fully synced
 - Start and End dates tracked
@@ -79,6 +74,11 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
   - `checkout.session.completed` → activate subscription
   - `customer.subscription.deleted` → cancel locally
   - `invoice.payment_failed` → mark as `PAST_DUE`
+
+### API Documentation
+- Swagger UI available at `/swagger-ui/index.html`
+- Full OpenAPI 3 spec auto-generated
+- Each endpoint grouped by tag: Auth, User, Plan, Subscription, Payment
 
 
 ---
@@ -129,6 +129,11 @@ stripe.secret.key=sk_test_...
 stripe.success.url=https://{ngrok}/payment-success
 stripe.cancel.url=https://{ngrok}/payment-cancel
 
+stripe login
+stripe listen --forward-to localhost:8080/api/v1/payments/webhook
+stripe trigger checkout.session.completed
+stripe trigger invoice.payment_failed
+
 
 Business Rules & Smart Logic:
 - Cannot subscribe to the same or lower-tier plan
@@ -139,15 +144,14 @@ Business Rules & Smart Logic:
 - Auto-cancellation at period end for clean user experience
 
 Upcoming Features:
-- Swagger / OpenAPI docs
-- Admin API (manage plans/users)
-- CI/CD-ready build
-- Environment-based config switching (dev/prod)
-- Deploy on AWS
 - **Invoice generation & PDF receipts**:
   - Generate user-facing invoices for completed payments
   - Download via user dashboard
   - Store invoice metadata in `invoices` table
+- Admin API (manage plans/users)
+- CI/CD-ready build
+- Environment-based config switching (dev/prod)
+- Deploy on AWS
 
 Security
 - Passwords securely hashed

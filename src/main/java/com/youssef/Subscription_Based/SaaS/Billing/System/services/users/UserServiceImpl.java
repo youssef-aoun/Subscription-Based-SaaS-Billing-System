@@ -36,6 +36,9 @@ public class UserServiceImpl implements UserService{
 
         User user = getCurrentAuthenticatedUser();
 
+        if(user == null)
+            throw new IllegalStateException("Unauthorized");
+
         ProfileResponse response = new ProfileResponse(
                 user.getName(),
                 user.getUsername(),
@@ -49,6 +52,9 @@ public class UserServiceImpl implements UserService{
     public ResponseEntity<SuccessResponse> updateProfile(UpdateProfileRequest request) {
 
         User user = getCurrentAuthenticatedUser();
+
+        if(user == null)
+            throw new IllegalStateException("Unauthorized");
 
         if(request.getName() != null) user.setName(request.getName());
         if(request.getEmail() != null) user.setEmail(request.getEmail());

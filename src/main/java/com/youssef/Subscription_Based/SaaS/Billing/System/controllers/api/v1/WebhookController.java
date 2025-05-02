@@ -2,8 +2,8 @@ package com.youssef.Subscription_Based.SaaS.Billing.System.controllers.api.v1;
 
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
-import com.youssef.Subscription_Based.SaaS.Billing.System.dao.SubscriptionRepository;
 import com.youssef.Subscription_Based.SaaS.Billing.System.services.payments.WebhookService;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+@Hidden
 @RestController
 @RequestMapping("/api/v1/payments")
 public class WebhookController {
@@ -34,7 +36,7 @@ public class WebhookController {
         String payload;
         String sigHeader = request.getHeader("Stripe-Signature");
 
-        try (Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A")) {
+        try (Scanner s = new Scanner(request.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A")) {
             payload = s.hasNext() ? s.next() : "";
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to read payload");

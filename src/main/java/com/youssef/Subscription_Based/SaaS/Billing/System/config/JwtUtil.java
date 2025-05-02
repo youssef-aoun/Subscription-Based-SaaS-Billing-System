@@ -61,7 +61,4 @@ public class JwtUtil {
     public long getExpirationInSeconds() {
         return EXPIRATION_TIME / 1000;
     }
-
-
-
 }

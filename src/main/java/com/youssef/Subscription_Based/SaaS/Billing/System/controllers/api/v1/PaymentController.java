@@ -5,7 +5,7 @@ import com.youssef.Subscription_Based.SaaS.Billing.System.services.payments.Paym
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -33,13 +33,6 @@ public class PaymentController {
             summary = "Create Stripe Checkout Session",
             description = "Creates a Stripe Checkout Session for the authenticated user based on the selected plan.",
             security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CheckoutRequest.class)
-                    )
-            ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",

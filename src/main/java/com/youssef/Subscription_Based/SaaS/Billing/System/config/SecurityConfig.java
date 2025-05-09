@@ -40,7 +40,9 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/api/v1/users/password-reset-request",
-                                "/api/v1/payments/webhook"
+                                "/api/v1/payments/webhook",
+                                "/api/v1/notifications/**",
+                                "/ws/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

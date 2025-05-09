@@ -36,7 +36,7 @@ public class WebhookController {
         String payload;
         String sigHeader = request.getHeader("Stripe-Signature");
 
-        try (Scanner s = new Scanner(request.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A")) {
+        try (Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A")) {
             payload = s.hasNext() ? s.next() : "";
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to read payload");

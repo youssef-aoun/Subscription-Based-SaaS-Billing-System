@@ -93,7 +93,7 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(BadCredentialsException.class)
+    /*@ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
@@ -102,7 +102,7 @@ public class GlobalExceptionHandler {
                 "Invalid username or password"
         );
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
+    }*/
 
 
 }

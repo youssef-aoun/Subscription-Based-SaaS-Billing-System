@@ -16,6 +16,7 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
 - **Lombok**, **MapStruct**
 - **Ngrok** (for local webhook testing)
 - **Springdoc OpenAPI** (Swagger UI)
+- **Docker & Docker Compose**
 
 ---
 
@@ -26,7 +27,7 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
 - [Database Design]
 - [Webhook Testing with Ngrok]
 - [Business Rules]
-- [Upcoming Features]
+- [Dockerization]
 - [Security]
 - [Test Cards]
 
@@ -75,6 +76,11 @@ A **production-grade SaaS backend microservice** built using **Java Spring Boot*
   - `customer.subscription.deleted` → cancel locally
   - `invoice.payment_failed` → mark as `PAST_DUE`
 
+### Invoice Generation & PDF Receipts
+- Generate user-facing invoices for completed payments
+- Download invoices via the user dashboard
+- Store invoice metadata in the invoices table
+
 ### API Documentation
 - Swagger UI available at `/swagger-ui/index.html`
 - Full OpenAPI 3 spec auto-generated
@@ -107,7 +113,7 @@ Custom `OncePerRequestFilter`s intercept sensitive endpoints **before Spring Sec
 | `plans`              | Monthly/Yearly subscription plans  |
 | `subscriptions`      | User–plan relationship             |
 | `webhook_events`     | Stripe webhook logs                |
-| `invoices`           | Stripe invoice data (WIP)          |
+| `invoices`           | Stripe invoice data                |
 | `feature_flags`      | Add-on features per plan           |
 
 ---
@@ -144,12 +150,6 @@ Business Rules & Smart Logic:
 - Auto-cancellation at period end for clean user experience
 
 Upcoming Features:
-- **Invoice generation & PDF receipts**:
-  - Generate user-facing invoices for completed payments
-  - Download via user dashboard
-  - Store invoice metadata in `invoices` table
-- Admin API (manage plans/users)
-- CI/CD-ready build
 - Environment-based config switching (dev/prod)
 - Deploy on AWS
 
